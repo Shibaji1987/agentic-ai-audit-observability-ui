@@ -12,7 +12,15 @@ export class AnalysisApiService {
     return this.http.post<AnalysisResult>(`${this.baseUrl}/analyze/${eventId}`, {});
   }
 
+  analyzeEventWithTools(eventId: string): Observable<AnalysisResult> {
+    return this.http.post<AnalysisResult>(`${this.baseUrl}/analyze-with-tools/${eventId}`, {});
+  }
+
   getFullAnalysis(eventId: string): Observable<AnalysisResult> {
     return this.http.get<AnalysisResult>(`${this.baseUrl}/full/${eventId}`);
+  }
+
+  getPersistedAnalysis(eventId: string): Observable<AnalysisResult> {
+    return this.http.get<AnalysisResult>(`${this.baseUrl}/analysis/${eventId}`);
   }
 }

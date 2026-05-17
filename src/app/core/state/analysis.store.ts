@@ -17,7 +17,9 @@ export class AnalysisStore {
     this.loading.set(true);
     this.error.set(null);
     try {
-      const result = await firstValueFrom(this.analysisApi.analyzeEvent(eventId));
+      const toolResult = await firstValueFrom(this.analysisApi.analyzeEventWithTools(eventId));
+      const full = await firstValueFrom(this.analysisApi.getFullAnalysis(eventId));
+      const result = this.mergeAnalysis(full, toolResult);
       this.selectedAnalysis.set(result);
       this.toolTrace.set(result.toolExecutions ?? []);
     } catch {
@@ -31,7 +33,9 @@ export class AnalysisStore {
     this.loading.set(true);
     this.error.set(null);
     try {
-      const result = await firstValueFrom(this.analysisApi.getFullAnalysis(eventId));
+      const full = await firstValueFrom(this.analysisApi.getFullAnalysis(eventId));
+      const persisted = await firstValueFrom(this.analysisApi.getPersistedAnalysis(eventId)).catch(() => full);
+      const result = this.mergeAnalysis(full, persisted);
       this.selectedAnalysis.set(result);
       this.toolTrace.set(result.toolExecutions ?? []);
     } catch {
@@ -39,5 +43,19 @@ export class AnalysisStore {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  private mergeAnalysis(full: AnalysisResult, persisted: AnalysisResult): AnalysisResult {
+    return {
+      ...persisted,
+      ...full,
+      eventId: persisted.eventId ?? full.eventId ?? full.auditEventId,
+      auditEventId: full.auditEventId ?? persisted.auditEventId ?? persisted.eventId,
+      confidenceScore: persisted.confidenceScore ?? full.confidenceScore,
+      matchedPolicyEvidence: persisted.matchedPolicyEvidence ?? full.matchedPolicyEvidence,
+      toolExecutions: persisted.toolExecutions ?? full.toolExecutions,
+      diagnostics: persisted.diagnostics ?? full.diagnostics,
+      reasoningTrace: persisted.reasoningTrace ?? full.reasoningTrace
+    };
   }
 }
