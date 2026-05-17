@@ -31,25 +31,88 @@
   }
 
   @if (eventId && analysis()) {
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <div class="text-sm text-slate-400">Risk Score</div>
+        <div class="mt-2 text-3xl text-cyan-300">{{ analysis()!.riskScore }}/10</div>
+      </div>
       <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
         <div class="text-sm text-slate-400">Confidence</div>
         <div class="mt-2 text-3xl text-purple-300">{{ confidenceScore() | number : '1.0-0' }}%</div>
       </div>
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <div class="text-sm text-slate-400">Category</div>
+        <div class="mt-2 break-words text-sm font-semibold text-white">{{ analysis()!.category || 'N/A' }}</div>
+      </div>
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <div class="text-sm text-slate-400">Status</div>
+        <div class="mt-2 text-sm font-semibold text-white">{{ analysis()!.status || 'N/A' }}</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
       <div class="rounded-xl border border-slate-800 bg-slate-900 p-5 lg:col-span-2">
         <div class="text-sm text-slate-400">AI Summary</div>
         <p class="mt-2 text-sm leading-6 text-slate-200">{{ analysis()!.summary }}</p>
+      </div>
+      <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <div class="text-sm text-slate-400">Recommended Action</div>
+        <p class="mt-2 text-sm leading-6 text-slate-200">{{ analysis()!.recommendedAction || 'No recommendation returned.' }}</p>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+      <h2 class="mb-4 text-lg font-medium text-white">Audit Event Context</h2>
+      <div class="grid grid-cols-1 gap-3 text-sm md:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-xl border border-slate-800 bg-slate-950 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Event Type</div>
+          <div class="mt-2 break-words text-slate-200">{{ analysis()!.eventType || 'N/A' }}</div>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-950 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Actor</div>
+          <div class="mt-2 break-words text-slate-200">{{ analysis()!.actor || 'N/A' }}</div>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-950 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Action</div>
+          <div class="mt-2 break-words text-slate-200">{{ analysis()!.action || 'N/A' }}</div>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-950 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Target</div>
+          <div class="mt-2 break-words text-slate-200">{{ analysis()!.target || 'N/A' }}</div>
+        </div>
+        <div class="rounded-xl border border-slate-800 bg-slate-950 p-4 md:col-span-2 xl:col-span-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Event Time</div>
+          <div class="mt-2 break-words text-slate-200">{{ analysis()!.eventTime || 'N/A' }}</div>
+        </div>
       </div>
     </div>
 
     @if (reasons().length) {
       <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-        <h2 class="mb-4 text-lg font-medium text-white">Reasoning</h2>
+        <h2 class="mb-4 text-lg font-medium text-white">Reasons</h2>
         <ul class="space-y-2 text-sm text-slate-300">
           @for (reason of reasons(); track reason) {
             <li class="rounded-xl border border-slate-800 bg-slate-950 p-3">{{ reason }}</li>
           }
         </ul>
+      </div>
+    }
+
+    @if (tags().length) {
+      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+        <h2 class="mb-4 text-lg font-medium text-white">Tags</h2>
+        <div class="flex flex-wrap gap-2">
+          @for (tag of tags(); track tag) {
+            <span class="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">{{ tag }}</span>
+          }
+        </div>
+      </div>
+    }
+
+    @if (metadata()) {
+      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+        <h2 class="mb-4 text-lg font-medium text-white">Event Metadata</h2>
+        <app-json-viewer [data]="metadata()" />
       </div>
     }
 
@@ -60,7 +123,7 @@
           <app-tool-trace-card [execution]="tool" [index]="i" />
         } @empty {
           <div class="rounded-xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-400">
-            No tool execution trace was returned by this backend endpoint.
+            This event has a basic AI analysis result. The current backend response did not include tool execution trace details for this analysis.
           </div>
         }
       </div>
