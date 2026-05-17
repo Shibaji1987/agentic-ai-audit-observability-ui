@@ -30,6 +30,12 @@ export const routes: Routes = [
             .then(m => m.SubmitEventComponent)
       },
       {
+        path: 'knowledge',
+        loadComponent: () =>
+          import('./features/knowledge/knowledge.component')
+            .then(m => m.KnowledgeComponent)
+      },
+      {
         path: 'analysis',
         loadComponent: () =>
           import('./features/analysis-details/analysis-details.component')

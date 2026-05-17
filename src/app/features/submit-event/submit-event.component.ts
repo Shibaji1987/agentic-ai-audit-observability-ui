@@ -7,12 +7,14 @@ import { AuditApiService } from '../../core/services/audit-api.service';
 import { AnalysisApiService } from '../../core/services/analysis-api.service';
 import { AuditEvent } from '../../core/models/audit-event.model';
 import { AnalysisStreamEvent, AnalysisStreamPhase, AnalysisStreamStatus } from '../../core/models/analysis-stream-event.model';
+import { PolicyEvidence } from '../../core/models/policy-evidence.model';
 import { ToolExecution } from '../../core/models/tool-execution.model';
+import { PolicyEvidenceCardComponent } from '../../shared/ui/policy-evidence-card/policy-evidence-card.component';
 
 @Component({
   selector: 'app-submit-event',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, PolicyEvidenceCardComponent],
   templateUrl: './submit-event.component.html',
   styleUrl: './submit-event.component.css'
 })
@@ -28,7 +30,8 @@ export class SubmitEventComponent {
   readonly currentEventId = signal<string | null>(null);
   readonly streamEvents = signal<AnalysisStreamEvent[]>([]);
   readonly streamedTools = signal<ToolExecution[]>([]);
-  readonly hasStreamActivity = computed(() => this.streamEvents().length > 0 || this.streamedTools().length > 0);
+  readonly selectedEvidence = signal<PolicyEvidence[]>([]);
+  readonly hasStreamActivity = computed(() => this.streamEvents().length > 0 || this.streamedTools().length > 0 || this.selectedEvidence().length > 0);
 
   readonly pipelineSteps: Array<{ phase: AnalysisStreamPhase; label: string; description: string }> = [
     { phase: 'EVENT_LOADED', label: '1. Event Ingestion', description: 'Validate incoming audit payload' },
@@ -89,6 +92,7 @@ export class SubmitEventComponent {
     this.currentEventId.set(null);
     this.streamEvents.set([]);
     this.streamedTools.set([]);
+    this.selectedEvidence.set([]);
     this.loading.set(false);
   }
 
@@ -143,6 +147,7 @@ export class SubmitEventComponent {
     this.closeAnalysisStream();
     this.streamEvents.set([]);
     this.streamedTools.set([]);
+    this.selectedEvidence.set([]);
 
     this.streamSubscription = this.analysisApi.streamAnalyzeEventWithTools(eventId).subscribe({
       next: (event) => this.handleStreamEvent(event),
@@ -158,6 +163,10 @@ export class SubmitEventComponent {
 
     if (event.toolExecution) {
       this.streamedTools.update((tools) => [...tools, event.toolExecution as ToolExecution]);
+    }
+
+    if (event.matchedPolicyEvidence?.length) {
+      this.selectedEvidence.set(event.matchedPolicyEvidence);
     }
 
     if (event.phase === 'ANALYSIS_FAILED') {

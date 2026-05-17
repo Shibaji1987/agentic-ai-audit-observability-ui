@@ -164,6 +164,20 @@
             </div>
           }
 
+          @if (selectedEvidence().length > 0) {
+            <div class="mt-5">
+              <div class="mb-3 flex items-center justify-between gap-3">
+                <div class="text-sm font-medium text-white">Selected Knowledge Chunks</div>
+                <div class="rounded-full border border-slate-700 px-2 py-0.5 text-[11px] text-slate-300">{{ selectedEvidence().length }} chunks</div>
+              </div>
+              <div class="space-y-3">
+                @for (evidence of selectedEvidence(); track evidence.sourceChunkId ?? evidence.policyId ?? $index; let i = $index) {
+                  <app-policy-evidence-card [evidence]="evidence" [index]="i" />
+                }
+              </div>
+            </div>
+          }
+
           <div class="mt-5 max-h-48 space-y-2 overflow-y-auto pr-1">
             @for (event of streamEvents(); track $index) {
               <div class="rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-slate-300">
