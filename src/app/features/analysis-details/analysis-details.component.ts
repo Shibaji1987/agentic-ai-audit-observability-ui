@@ -3,13 +3,14 @@ import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AnalysisStore } from '../../core/state/analysis.store';
 import { JsonViewerComponent } from '../../shared/ui/json-viewer/json-viewer.component';
+import { PolicyEvidenceCardComponent } from '../../shared/ui/policy-evidence-card/policy-evidence-card.component';
 import { RiskBadgeComponent } from '../../shared/ui/risk-badge/risk-badge.component';
 import { ToolTraceCardComponent } from '../../shared/ui/tool-trace-card/tool-trace-card.component';
 
 @Component({
   selector: 'app-analysis-details',
   standalone: true,
-  imports: [RiskBadgeComponent, ToolTraceCardComponent, JsonViewerComponent, DecimalPipe, RouterLink],
+  imports: [RiskBadgeComponent, ToolTraceCardComponent, PolicyEvidenceCardComponent, JsonViewerComponent, DecimalPipe, RouterLink],
   templateUrl: './analysis-details.component.html',
   styleUrl: './analysis-details.component.css'
 })
@@ -25,6 +26,7 @@ export class AnalysisDetailsComponent {
   readonly reasons = computed(() => this.analysis()?.reasons ?? []);
   readonly tags = computed(() => this.analysis()?.tags ?? []);
   readonly metadata = computed(() => this.analysis()?.metadata ?? null);
+  readonly selectedEvidence = computed(() => this.analysis()?.matchedPolicyEvidence ?? []);
   readonly hasBasicAnalysis = computed(() => this.toolExecutions().length === 0);
 
   constructor() {

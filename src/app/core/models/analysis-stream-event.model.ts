@@ -1,4 +1,5 @@
 import { AnalysisResult } from './analysis-result.model';
+import { PolicyEvidence } from './policy-evidence.model';
 import { ToolExecution } from './tool-execution.model';
 
 export type AnalysisStreamPhase =
@@ -17,6 +18,7 @@ export interface AnalysisStreamEvent {
   phase: AnalysisStreamPhase;
   status: AnalysisStreamStatus;
   message: string;
+  matchedPolicyEvidence?: PolicyEvidence[];
   toolExecution?: ToolExecution;
   analysis?: AnalysisResult;
   timestamp: string;
