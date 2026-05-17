@@ -7,6 +7,20 @@ export interface AnalysisResult {
 
   auditEventId?: string;
 
+  eventType?: string;
+
+  actor?: string;
+
+  action?: string;
+
+  target?: string;
+
+  status?: string;
+
+  eventTime?: string;
+
+  metadata?: Record<string, any>;
+
   riskScore: number;
 
   confidenceScore?: number;
