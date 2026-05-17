@@ -2,7 +2,7 @@ export interface ToolExecution {
 
   toolName: string;
 
-  status:
+  status?:
     | 'SUCCESS'
     | 'FAILED'
     | 'RUNNING'
@@ -10,13 +10,21 @@ export interface ToolExecution {
     | 'RETRYING'
     | 'SKIPPED';
 
+  success?: boolean;
+
   durationMs: number;
 
-  confidence: number;
+  confidence?: number;
 
-  input: Record<string, any>;
+  input?: Record<string, any>;
 
-  output: Record<string, any>;
+  output?: Record<string, any>;
+
+  inputSummary?: string;
+
+  outputSummary?: string;
+
+  executedAt?: string;
 
   reasoning?: string;
 

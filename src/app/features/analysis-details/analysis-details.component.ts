@@ -32,4 +32,10 @@ export class AnalysisDetailsComponent {
       void this.analysisStore.loadFullAnalysis(this.eventId);
     }
   }
+
+  runToolAnalysis(): void {
+    if (this.eventId) {
+      void this.analysisStore.analyzeEvent(this.eventId);
+    }
+  }
 }

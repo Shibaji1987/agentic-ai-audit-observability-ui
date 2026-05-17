@@ -60,7 +60,7 @@ export class SubmitEventComponent {
         throw new Error('Saved event response did not include an id.');
       }
 
-      await firstValueFrom(this.analysisApi.analyzeEvent(eventId));
+      await firstValueFrom(this.analysisApi.analyzeEventWithTools(eventId));
       await this.router.navigate(['/analysis', eventId]);
     } catch (error) {
       this.error.set(this.toErrorMessage(error));
