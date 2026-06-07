@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 import { AnalysisResult } from '../models/analysis-result.model';
 import { AnalysisStreamEvent } from '../models/analysis-stream-event.model';
 
@@ -8,6 +9,7 @@ import { AnalysisStreamEvent } from '../models/analysis-stream-event.model';
 export class AnalysisApiService {
   private readonly http = inject(HttpClient);
   private readonly zone = inject(NgZone);
+  private readonly authService = inject(AuthService);
   private readonly baseUrl = '/audit';
   private readonly streamEventNames = [
     'analysis-started',
@@ -37,7 +39,9 @@ export class AnalysisApiService {
 
   streamAnalyzeEventWithTools(eventId: string): Observable<AnalysisStreamEvent> {
     return new Observable<AnalysisStreamEvent>((observer) => {
-      const source = new EventSource(`${this.baseUrl}/analyze-with-tools/${encodeURIComponent(eventId)}/stream`);
+      const token = this.authService.getAccessToken();
+      const tokenQuery = token ? `?access_token=${encodeURIComponent(token)}` : '';
+      const source = new EventSource(`${this.baseUrl}/analyze-with-tools/${encodeURIComponent(eventId)}/stream${tokenQuery}`);
       const handleMessage = (message: MessageEvent<string>) => {
         this.zone.run(() => {
           try {
