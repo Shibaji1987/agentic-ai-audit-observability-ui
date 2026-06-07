@@ -1,0 +1,85 @@
+<main class="min-h-screen bg-slate-950 text-slate-100">
+  <section class="mx-auto grid min-h-screen max-w-6xl grid-cols-1 lg:grid-cols-[1.05fr_0.95fr]">
+    <div class="flex flex-col justify-center px-6 py-12 lg:px-10">
+      <div class="max-w-xl">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-300">
+          Agentic Risk Intelligence
+        </p>
+
+        <h1 class="mt-5 text-4xl font-semibold leading-tight text-white md:text-5xl">
+          AI Audit Monitor
+        </h1>
+
+        <p class="mt-5 text-base leading-7 text-slate-400">
+          Secure analyst access for audit event ingestion, AI-assisted investigation, policy evidence, and operational risk review.
+        </p>
+
+        <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div class="border-l border-cyan-400/40 pl-4">
+            <div class="text-2xl font-semibold text-white">JWT</div>
+            <div class="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">Stateless Access</div>
+          </div>
+
+          <div class="border-l border-emerald-400/40 pl-4">
+            <div class="text-2xl font-semibold text-white">SSE</div>
+            <div class="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">Live Analysis</div>
+          </div>
+
+          <div class="border-l border-amber-300/40 pl-4">
+            <div class="text-2xl font-semibold text-white">RAG</div>
+            <div class="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">Policy Evidence</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center px-6 py-12 lg:px-10">
+      <form
+        class="w-full rounded border border-slate-800 bg-slate-900/80 p-8 shadow-2xl shadow-black/30"
+        (ngSubmit)="login()">
+        <div>
+          <h2 class="text-2xl font-semibold text-white">Sign in</h2>
+          <p class="mt-2 text-sm text-slate-400">Use your analyst credentials to continue.</p>
+        </div>
+
+        @if (error()) {
+          <div class="mt-6 rounded border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            {{ error() }}
+          </div>
+        }
+
+        <label class="mt-8 block">
+          <span class="text-sm font-medium text-slate-300">Username</span>
+          <input
+            name="username"
+            [(ngModel)]="username"
+            required
+            autocomplete="username"
+            class="mt-2 w-full rounded border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400" />
+        </label>
+
+        <label class="mt-5 block">
+          <span class="text-sm font-medium text-slate-300">Password</span>
+          <input
+            name="password"
+            [(ngModel)]="password"
+            required
+            type="password"
+            autocomplete="current-password"
+            class="mt-2 w-full rounded border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400" />
+        </label>
+
+        <button
+          type="submit"
+          [disabled]="loading()"
+          class="mt-8 flex w-full items-center justify-center rounded bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400">
+          {{ loading() ? 'Signing in...' : 'Sign in securely' }}
+        </button>
+
+        <p class="mt-5 text-xs leading-5 text-slate-500">
+          Default development credentials are configured through backend environment properties and can be rotated without UI changes.
+        </p>
+      </form>
+    </div>
+  </section>
+</main>
