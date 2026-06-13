@@ -10,6 +10,7 @@ import {
   KnowledgeSearchResult
 } from '../../core/models/knowledge.model';
 import { KnowledgeApiService } from '../../core/services/knowledge-api.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-knowledge',
@@ -20,6 +21,7 @@ import { KnowledgeApiService } from '../../core/services/knowledge-api.service';
 })
 export class KnowledgeComponent implements OnInit {
   private readonly knowledgeApi = inject(KnowledgeApiService);
+  readonly authService = inject(AuthService);
 
   readonly catalogLoading = signal(true);
   readonly catalogError = signal<string | null>(null);

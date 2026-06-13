@@ -7,6 +7,7 @@ import { JsonViewerComponent } from '../../shared/ui/json-viewer/json-viewer.com
 import { PolicyEvidenceCardComponent } from '../../shared/ui/policy-evidence-card/policy-evidence-card.component';
 import { RiskBadgeComponent } from '../../shared/ui/risk-badge/risk-badge.component';
 import { ToolTraceCardComponent } from '../../shared/ui/tool-trace-card/tool-trace-card.component';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-analysis-details',
@@ -18,6 +19,7 @@ import { ToolTraceCardComponent } from '../../shared/ui/tool-trace-card/tool-tra
 export class AnalysisDetailsComponent {
   private readonly route = inject(ActivatedRoute);
   readonly analysisStore = inject(AnalysisStore);
+  readonly authService = inject(AuthService);
 
   readonly analysis = computed(() => this.analysisStore.selectedAnalysis());
   readonly eventId = this.route.snapshot.paramMap.get('eventId');

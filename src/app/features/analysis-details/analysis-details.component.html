@@ -16,7 +16,9 @@
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
           <a routerLink="/audit-events" class="rounded-xl bg-cyan-500 px-5 py-3 text-sm font-medium text-slate-950">View Audit Events</a>
-          <a routerLink="/submit-event" class="rounded-xl border border-slate-700 px-5 py-3 text-sm font-medium text-slate-200 hover:border-cyan-400/50 hover:text-cyan-200">Submit Event</a>
+          @if (authService.canSubmitAudit()) {
+            <a routerLink="/submit-event" class="rounded-xl border border-slate-700 px-5 py-3 text-sm font-medium text-slate-200 hover:border-cyan-400/50 hover:text-cyan-200">Submit Event</a>
+          }
         </div>
       </div>
     </div>
@@ -138,20 +140,27 @@
     <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
       <div class="mb-4 flex items-center justify-between gap-4">
         <h2 class="text-lg font-medium text-white">Tool Execution Trace</h2>
-        <button
-          type="button"
-          (click)="runToolAnalysis()"
-          [disabled]="analysisStore.loading()"
-          class="rounded-xl bg-cyan-500 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60">
-          {{ analysisStore.loading() ? 'Running...' : 'Run Tool Analysis' }}
-        </button>
+        @if (authService.canSubmitAudit()) {
+          <button
+            type="button"
+            (click)="runToolAnalysis()"
+            [disabled]="analysisStore.loading()"
+            class="rounded-xl bg-cyan-500 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60">
+            {{ analysisStore.loading() ? 'Running...' : 'Run Tool Analysis' }}
+          </button>
+        }
       </div>
       <div class="space-y-3">
         @for (tool of toolExecutions(); track tool.toolName; let i = $index) {
           <app-tool-trace-card [execution]="tool" [index]="i" />
         } @empty {
           <div class="rounded-xl border border-slate-800 bg-slate-950 p-4 text-sm text-slate-400">
-            This event has a basic AI analysis result. Click Run Tool Analysis to invoke `/audit/analyze-with-tools/{{ eventId }}` and persist tool execution trace details.
+            This event has a basic AI analysis result.
+            @if (authService.canSubmitAudit()) {
+              Run Tool Analysis to persist the detailed execution trace.
+            } @else {
+              An analyst or administrator can run the detailed tool analysis.
+            }
           </div>
         }
       </div>
