@@ -6,6 +6,8 @@ export type AnalysisStreamPhase =
   | 'ANALYSIS_STARTED'
   | 'EVENT_LOADED'
   | 'POLICY_RETRIEVAL'
+  | 'LLM_DECISION'
+  | 'TOOL_REQUESTED'
   | 'TOOL_EXECUTION'
   | 'AI_REASONING'
   | 'ANALYSIS_COMPLETED'

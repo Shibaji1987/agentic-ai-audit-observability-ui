@@ -15,6 +15,8 @@ export class AnalysisApiService {
     'analysis-started',
     'event-loaded',
     'policy-retrieval',
+    'llm-decision',
+    'tool-requested',
     'tool-execution',
     'ai-reasoning',
     'analysis-completed',
@@ -41,7 +43,7 @@ export class AnalysisApiService {
     return new Observable<AnalysisStreamEvent>((observer) => {
       const token = this.authService.getAccessToken();
       const tokenQuery = token ? `?access_token=${encodeURIComponent(token)}` : '';
-      const source = new EventSource(`${this.baseUrl}/analyze-with-tools/${encodeURIComponent(eventId)}/stream${tokenQuery}`);
+      const source = new EventSource(`${this.baseUrl}/analyze-with-llm-tools/${encodeURIComponent(eventId)}/stream${tokenQuery}`);
       const handleMessage = (message: MessageEvent<string>) => {
         this.zone.run(() => {
           try {

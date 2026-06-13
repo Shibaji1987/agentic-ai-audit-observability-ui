@@ -36,8 +36,9 @@ export class SubmitEventComponent {
   readonly pipelineSteps: Array<{ phase: AnalysisStreamPhase; label: string; description: string }> = [
     { phase: 'EVENT_LOADED', label: '1. Event Ingestion', description: 'Validate incoming audit payload' },
     { phase: 'POLICY_RETRIEVAL', label: '2. RAG Retrieval', description: 'Retrieve policy and knowledge evidence' },
-    { phase: 'TOOL_EXECUTION', label: '3. Tool Orchestration', description: 'Execute agent tools and collect evidence' },
-    { phase: 'AI_REASONING', label: '4. AI Reasoning', description: 'Generate risk score and recommendations' }
+    { phase: 'LLM_DECISION', label: '3. LLM Decision', description: 'Decide whether additional evidence is required' },
+    { phase: 'TOOL_EXECUTION', label: '4. Tool Execution', description: 'Execute model-requested tools under guardrails' },
+    { phase: 'AI_REASONING', label: '5. Final Assessment', description: 'Generate the grounded risk assessment' }
   ];
 
   payload = `{
