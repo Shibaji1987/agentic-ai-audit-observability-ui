@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, filter, map, switchMap, take, timeout, timer } from 'rxjs';
 import { AuthService } from './auth.service';
 import { AnalysisResult } from '../models/analysis-result.model';
 import { AnalysisStreamEvent } from '../models/analysis-stream-event.model';
+import { AnalysisRun, CreateAnalysisRunResponse } from '../models/analysis-run.model';
 
 @Injectable({ providedIn: 'root' })
 export class AnalysisApiService {
@@ -27,10 +28,6 @@ export class AnalysisApiService {
     return this.http.post<AnalysisResult>(`${this.baseUrl}/analyze/${eventId}`, {});
   }
 
-  analyzeEventWithTools(eventId: string): Observable<AnalysisResult> {
-    return this.http.post<AnalysisResult>(`${this.baseUrl}/analyze-with-tools/${eventId}`, {});
-  }
-
   getFullAnalysis(eventId: string): Observable<AnalysisResult> {
     return this.http.get<AnalysisResult>(`${this.baseUrl}/full/${eventId}`);
   }
@@ -39,11 +36,42 @@ export class AnalysisApiService {
     return this.http.get<AnalysisResult>(`${this.baseUrl}/analysis/${eventId}`);
   }
 
-  streamAnalyzeEventWithTools(eventId: string): Observable<AnalysisStreamEvent> {
+  createAnalysisRun(eventId: string): Observable<CreateAnalysisRunResponse> {
+    return this.http.post<CreateAnalysisRunResponse>(
+      `${this.baseUrl}/events/${encodeURIComponent(eventId)}/analysis-runs`,
+      {}
+    );
+  }
+
+  getAnalysisRun(resultUrl: string): Observable<AnalysisRun> {
+    return this.http.get<AnalysisRun>(resultUrl);
+  }
+
+  executeAnalysisRun(eventId: string): Observable<AnalysisResult> {
+    return this.createAnalysisRun(eventId).pipe(
+      switchMap((created) =>
+        timer(0, 1000).pipe(
+          switchMap(() => this.getAnalysisRun(created.resultUrl)),
+          filter((run) => run.status === 'COMPLETED' || run.status === 'FAILED'),
+          take(1),
+          timeout(10 * 60 * 1000),
+          map((run) => {
+            if (run.status === 'FAILED' || !run.result) {
+              throw new Error(run.errorMessage || 'The analysis run failed without a result.');
+            }
+            return run.result;
+          })
+        )
+      )
+    );
+  }
+
+  streamAnalysisRun(streamUrl: string): Observable<AnalysisStreamEvent> {
     return new Observable<AnalysisStreamEvent>((observer) => {
       const token = this.authService.getAccessToken();
-      const tokenQuery = token ? `?access_token=${encodeURIComponent(token)}` : '';
-      const source = new EventSource(`${this.baseUrl}/analyze-with-llm-tools/${encodeURIComponent(eventId)}/stream${tokenQuery}`);
+      const separator = streamUrl.includes('?') ? '&' : '?';
+      const tokenQuery = token ? `${separator}access_token=${encodeURIComponent(token)}` : '';
+      const source = new EventSource(`${streamUrl}${tokenQuery}`);
       const handleMessage = (message: MessageEvent<string>) => {
         this.zone.run(() => {
           try {

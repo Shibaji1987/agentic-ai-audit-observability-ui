@@ -28,6 +28,7 @@ export class SubmitEventComponent {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly currentEventId = signal<string | null>(null);
+  readonly currentAnalysisRunId = signal<string | null>(null);
   readonly streamEvents = signal<AnalysisStreamEvent[]>([]);
   readonly streamedTools = signal<ToolExecution[]>([]);
   readonly selectedEvidence = signal<PolicyEvidence[]>([]);
@@ -79,7 +80,9 @@ export class SubmitEventComponent {
       }
 
       this.currentEventId.set(eventId);
-      this.openAnalysisStream(eventId);
+      const run = await firstValueFrom(this.analysisApi.createAnalysisRun(eventId));
+      this.currentAnalysisRunId.set(run.analysisRunId);
+      this.openAnalysisStream(run.streamUrl);
     } catch (error) {
       this.error.set(this.toErrorMessage(error));
       this.loading.set(false);
@@ -91,6 +94,7 @@ export class SubmitEventComponent {
     this.payload = '';
     this.error.set(null);
     this.currentEventId.set(null);
+    this.currentAnalysisRunId.set(null);
     this.streamEvents.set([]);
     this.streamedTools.set([]);
     this.selectedEvidence.set([]);
@@ -144,13 +148,13 @@ export class SubmitEventComponent {
       : `${base} border-emerald-500 bg-emerald-500/10 text-emerald-300`;
   }
 
-  private openAnalysisStream(eventId: string): void {
+  private openAnalysisStream(streamUrl: string): void {
     this.closeAnalysisStream();
     this.streamEvents.set([]);
     this.streamedTools.set([]);
     this.selectedEvidence.set([]);
 
-    this.streamSubscription = this.analysisApi.streamAnalyzeEventWithTools(eventId).subscribe({
+    this.streamSubscription = this.analysisApi.streamAnalysisRun(streamUrl).subscribe({
       next: (event) => this.handleStreamEvent(event),
       error: (error) => {
         this.error.set(this.toErrorMessage(error));

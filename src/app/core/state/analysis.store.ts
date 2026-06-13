@@ -17,7 +17,7 @@ export class AnalysisStore {
     this.loading.set(true);
     this.error.set(null);
     try {
-      const toolResult = await firstValueFrom(this.analysisApi.analyzeEventWithTools(eventId));
+      const toolResult = await firstValueFrom(this.analysisApi.executeAnalysisRun(eventId));
       const full = await firstValueFrom(this.analysisApi.getFullAnalysis(eventId));
       const result = this.mergeAnalysis(full, toolResult);
       this.selectedAnalysis.set(result);
