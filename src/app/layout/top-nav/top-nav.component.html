@@ -28,10 +28,16 @@
     </div>
 
     <!-- Status -->
-    <div class="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-xs font-medium text-emerald-300">
-
-      AI Engine Active
-
+    <div
+      class="rounded-full border px-4 py-2 text-xs font-medium"
+      [ngClass]="engineStatusStore.status()?.status === 'ACTIVE'
+        ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300'
+        : 'border-slate-700 bg-slate-900 text-slate-400'">
+      @if (engineStatusStore.status(); as engine) {
+        AI Engine {{ engine.status }}
+      } @else {
+        AI Engine {{ engineStatusStore.unavailable() ? 'Unavailable' : 'Checking' }}
+      }
     </div>
 
     <!-- User -->
