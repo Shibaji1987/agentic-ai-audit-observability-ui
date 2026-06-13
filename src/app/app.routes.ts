@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { ShellComponent } from './layout/shell/shell.component';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -33,6 +34,8 @@ export const routes: Routes = [
       },
       {
         path: 'submit-event',
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN', 'ANALYST'] },
         loadComponent: () =>
           import('./features/submit-event/submit-event.component')
             .then(m => m.SubmitEventComponent)
@@ -54,6 +57,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/analysis-details/analysis-details.component')
             .then(m => m.AnalysisDetailsComponent)
+      },
+      {
+        path: 'forbidden',
+        loadComponent: () =>
+          import('./features/forbidden/forbidden.component')
+            .then(m => m.ForbiddenComponent)
       }
     ]
   },

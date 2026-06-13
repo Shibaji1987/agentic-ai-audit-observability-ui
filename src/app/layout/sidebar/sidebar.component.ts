@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { EngineStatusStore } from '../../core/state/engine-status.store';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,6 +13,7 @@ import { EngineStatusStore } from '../../core/state/engine-status.store';
 })
 export class SidebarComponent {
   readonly engineStatusStore = inject(EngineStatusStore);
+  readonly authService = inject(AuthService);
 
   formatUptime(totalSeconds: number): string {
     const days = Math.floor(totalSeconds / 86_400);

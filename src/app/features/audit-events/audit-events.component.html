@@ -4,7 +4,9 @@
       <h1 class="text-2xl font-semibold text-white">Audit Events</h1>
       <p class="mt-2 text-sm text-slate-400">Explore, filter, and investigate AI-analyzed audit events.</p>
     </div>
-    <a routerLink="/submit-event" class="rounded-xl bg-cyan-500 px-5 py-3 text-sm font-medium text-slate-950">Submit Event</a>
+    @if (authService.canSubmitAudit()) {
+      <a routerLink="/submit-event" class="rounded-xl bg-cyan-500 px-5 py-3 text-sm font-medium text-slate-950">Submit Event</a>
+    }
   </div>
 
   @if (store.error()) {

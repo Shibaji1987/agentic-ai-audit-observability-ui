@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, ModuleRegistry } from 'ag-grid-community';
 import { AuditEventsStore } from '../../core/state/audit-events.store';
+import { AuthService } from '../../core/services/auth.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -16,6 +17,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 export class AuditEventsComponent {
   private readonly router = inject(Router);
   readonly store = inject(AuditEventsStore);
+  readonly authService = inject(AuthService);
 
   readonly rowData = computed(() =>
     this.store.events().map((event) => ({
