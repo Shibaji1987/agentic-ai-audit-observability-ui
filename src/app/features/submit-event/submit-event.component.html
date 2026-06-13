@@ -143,7 +143,12 @@
             </h3>
 
             @if (currentEventId()) {
-              <div class="text-xs text-slate-400">{{ currentEventId() }}</div>
+              <div class="text-right text-xs text-slate-400">
+                <div>Event {{ currentEventId() }}</div>
+                @if (currentAnalysisRunId()) {
+                  <div class="mt-1 text-slate-500">Run {{ currentAnalysisRunId() }}</div>
+                }
+              </div>
             }
           </div>
 
